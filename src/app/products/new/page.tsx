@@ -2,13 +2,17 @@
 
 import { ChangeEvent, FormEvent, useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const NewProductPage = () => {
+  const router = useRouter();
+
   const [newProduct, setNewProduct] = useState({
     name: "",
     description: "",
     price: 0,
   });
+  const [goToProducts, setGoToProducts] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNewProduct({
@@ -21,7 +25,12 @@ const NewProductPage = () => {
     e.preventDefault();
     console.log(newProduct);
     await axios.post("/api/products", newProduct);
+    setGoToProducts(true);
   };
+
+  if (goToProducts) {
+    return router.push("/products");
+  }
 
   return (
     <div>
