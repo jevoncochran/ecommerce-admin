@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("react-toastify/dist/ReactToastify.css");
+
 input,
 textarea {
   @apply border-2 border-gray-400 rounded-md px-1 w-full mb-2;
