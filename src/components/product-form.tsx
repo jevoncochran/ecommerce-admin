@@ -5,6 +5,7 @@ import { Product, ToastType } from "@/types";
 import { notify } from "@/utils/notify";
 import { ToastContainer } from "react-toastify";
 import Image from "next/image";
+import Spinner from "./spinner";
 
 interface ProductFormProps {
   productInfo: Product;
@@ -22,7 +23,7 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
     images: productInfo.images,
   });
   const [images, setImages] = useState(productInfo.images || []);
-
+  const [isUploading, setIsUploading] = useState(false);
   const [goToProducts, setGoToProducts] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -59,11 +60,12 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
   const uploadImages = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files?.length && files?.length > 0) {
+      setIsUploading(true);
       const data = new FormData();
 
       data.append("file", files[0]);
       const res = await axios.post("/api/upload", data);
-      console.log(res.data);
+      setIsUploading(false);
       setImages((prevImages) => {
         return [...prevImages, res.data.link];
       });
@@ -88,30 +90,37 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
         />
         <label htmlFor="">Photos</label>
         <div className="mb-2 flex flex-wrap gap-2">
-          <label
-            // The file uploader will not opem when this is here for some reason
-            // htmlFor="imageUpload"
-            className="w-24 h-24 flex justify-center items-center text-sm gap-1 text-gray-500 rounded-lg bg-gray-200 cursor-pointer"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
+          {!isUploading ? (
+            <label
+              // The file uploader will not opem when this is here for some reason
+              // htmlFor="imageUpload"
+              className="w-24 h-24 flex justify-center items-center text-sm gap-1 text-gray-500 rounded-lg bg-gray-200 cursor-pointer"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-              />
-            </svg>
-            Upload
-            <input type="file" className="hidden" onChange={uploadImages} />
-          </label>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                />
+              </svg>
+              Upload
+              <input type="file" className="hidden" onChange={uploadImages} />
+            </label>
+          ) : (
+            <div className="w-24 h-24 flex justify-center items-center text-sm gap-1 text-gray-500 rounded-lg bg-gray-200 cursor-pointer">
+              <Spinner />
+            </div>
+          )}
           {!!images.length &&
             images.map((link: string) => (
+              // TODO: Make image height take up full height of div w automatic width
               <Image
                 key={link}
                 src={link}
