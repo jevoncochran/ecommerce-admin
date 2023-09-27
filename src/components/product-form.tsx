@@ -4,6 +4,7 @@ import axios from "axios";
 import { Product, ToastType } from "@/types";
 import { notify } from "@/utils/notify";
 import { ToastContainer } from "react-toastify";
+import Image from "next/image";
 
 interface ProductFormProps {
   productInfo: Product;
@@ -20,6 +21,7 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
     price: productInfo.price,
     images: productInfo.images,
   });
+  const [images, setImages] = useState(productInfo.images || []);
 
   const [goToProducts, setGoToProducts] = useState(false);
 
@@ -35,7 +37,7 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
 
     if (type === "create") {
       // Create product
-      await axios.post("/api/products", product);
+      await axios.post("/api/products", { ...product, images });
       notify("Product succesfully created", ToastType.Success);
       setTimeout(() => {
         setGoToProducts(true);
@@ -44,6 +46,7 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
       // Edit product
       await axios.put(`/api/products/${productId}`, {
         ...product,
+        images,
         _id: productId,
       });
       notify("Product succesfully updated", ToastType.Success);
@@ -60,6 +63,10 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
 
       data.append("file", files[0]);
       const res = await axios.post("/api/upload", data);
+      console.log(res.data);
+      setImages((prevImages) => {
+        return [...prevImages, res.data.link];
+      });
     }
   };
 
@@ -80,7 +87,7 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
           onChange={handleChange}
         />
         <label htmlFor="">Photos</label>
-        <div className="mb-2">
+        <div className="mb-2 flex flex-wrap gap-2">
           <label
             // The file uploader will not opem when this is here for some reason
             // htmlFor="imageUpload"
@@ -103,7 +110,18 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
             Upload
             <input type="file" className="hidden" onChange={uploadImages} />
           </label>
-          {!product.images?.length && <div>No images of this product</div>}
+          {!!images.length &&
+            images.map((link: string) => (
+              <Image
+                key={link}
+                src={link}
+                alt="product"
+                height={96}
+                width={96}
+                className="rounded-lg"
+              />
+            ))}
+          {!images.length && <div>No images of this product</div>}
         </div>
         <label htmlFor="description">Product Description</label>
         <textarea

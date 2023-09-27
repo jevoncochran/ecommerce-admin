@@ -2,6 +2,7 @@ export interface Product {
   name: string;
   description: string;
   price: number;
+  images?: string[];
 }
 
 export interface ExistingProduct extends Product {

@@ -9,6 +9,7 @@ export async function POST(req: Request, res: Response) {
   const mimeType = file.type;
   const fileExtension = mimeType.split("/")[1];
   const fileName = `${uuid()}.${fileExtension}`;
+  const newFileName = `${Date.now()}-${fileName}`;
 
   const client = new S3Client({
     region: "us-east-2",
@@ -18,17 +19,19 @@ export async function POST(req: Request, res: Response) {
     },
   });
 
-  client.send(
+  await client.send(
     new PutObjectCommand({
-      Bucket: "jevonc-next-ecommerce",
-      Key: `${Date.now()}-${fileName}`,
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: newFileName,
       Body: buffer,
       ContentType: mimeType,
       ACL: "public-read",
     })
   );
 
-  return new Response(JSON.stringify({ success: true, fileName }), {
+  const link = `https://${process.env.S3_BUCKET_NAME}.s3.us-east-2.amazonaws.com/${newFileName}`;
+
+  return new Response(JSON.stringify({ success: true, link }), {
     status: 201,
   });
 }
