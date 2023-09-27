@@ -7,8 +7,6 @@ import Image from "next/image";
 export default function Home() {
   const { data: session } = useSession();
 
-  console.log(session);
-
   if (!session)
     return (
       <div className="bg-blue-900 w-screen h-screen flex items-center">

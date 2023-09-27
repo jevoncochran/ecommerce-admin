@@ -14,7 +14,6 @@ const EditProductPage = ({ params }: { params: { id: string } }) => {
     axios
       .get(`/api/products/${id}`)
       .then((res) => {
-        console.log(res.data);
         setProduct(res.data);
       })
       .catch((err) => {

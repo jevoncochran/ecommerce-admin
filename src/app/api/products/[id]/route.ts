@@ -9,7 +9,6 @@ export async function GET(req: Request, { params }: Params) {
   const { id } = params;
   const product = await Product.findById(id);
 
-  console.log(product);
   return new Response(JSON.stringify(product), { status: 200 });
 }
 
@@ -26,4 +25,13 @@ export async function PUT(req: Request, { params }: Params) {
   );
 
   return new Response(JSON.stringify(product), { status: 201 });
+}
+
+export async function DELETE(req: Request, { params }: Params) {
+  await mongooseConnect();
+
+  const { id } = params;
+
+  await Product.deleteOne({ _id: id });
+  return new Response(JSON.stringify(true), { status: 200 });
 }

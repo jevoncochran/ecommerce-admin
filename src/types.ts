@@ -7,3 +7,8 @@ export interface Product {
 export interface ExistingProduct extends Product {
   _id: string;
 }
+
+export enum ToastType {
+  Success = "success",
+  Error = "error",
+}
