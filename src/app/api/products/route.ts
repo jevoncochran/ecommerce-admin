@@ -13,7 +13,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   return new Response(JSON.stringify(product), { status: 201 });
 }
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET() {
   await mongooseConnect();
 
   try {

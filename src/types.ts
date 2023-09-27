@@ -1,3 +1,11 @@
+export interface Category {
+  name: string;
+}
+
+export interface ExistingCategory extends Category {
+  _id: string;
+}
+
 export interface Product {
   name: string;
   description: string;

@@ -148,7 +148,7 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
           value={product.price}
           onChange={(e) => handleChange(e)}
         />
-        <button type="submit" className="btnPrimary">
+        <button type="submit" className="btn-primary">
           Save
         </button>
       </form>
