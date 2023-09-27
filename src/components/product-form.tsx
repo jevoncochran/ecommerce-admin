@@ -18,6 +18,7 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
     name: productInfo.name,
     description: productInfo.description,
     price: productInfo.price,
+    images: productInfo.images,
   });
 
   const [goToProducts, setGoToProducts] = useState(false);
@@ -52,6 +53,16 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
     }
   };
 
+  const uploadImages = async (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files?.length && files?.length > 0) {
+      const data = new FormData();
+
+      data.append("file", files[0]);
+      const res = await axios.post("/api/upload", data);
+    }
+  };
+
   if (goToProducts) {
     router.push("/products");
   }
@@ -68,6 +79,32 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
           value={product.name}
           onChange={handleChange}
         />
+        <label htmlFor="">Photos</label>
+        <div className="mb-2">
+          <label
+            // The file uploader will not opem when this is here for some reason
+            // htmlFor="imageUpload"
+            className="w-24 h-24 flex justify-center items-center text-sm gap-1 text-gray-500 rounded-lg bg-gray-200 cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+              />
+            </svg>
+            Upload
+            <input type="file" className="hidden" onChange={uploadImages} />
+          </label>
+          {!product.images?.length && <div>No images of this product</div>}
+        </div>
         <label htmlFor="description">Product Description</label>
         <textarea
           name="description"
