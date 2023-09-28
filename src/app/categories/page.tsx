@@ -5,8 +5,14 @@ import axios from "axios";
 import { ExistingCategory } from "@/types";
 import EditButton from "@/components/edit-button";
 import DeleteButton from "@/components/delete-button";
+import { withSwal } from "react-sweetalert2";
 
-const Categories = () => {
+interface CategoriesProps {
+  swal: any;
+}
+
+// TODO: Figure out react-sweetalert2 types
+const Categories = ({ swal }: CategoriesProps) => {
   const [newCategory, setNewCategory] = useState({
     name: "",
     parentCategory: "",
@@ -46,6 +52,27 @@ const Categories = () => {
 
   const editCategory = (category: ExistingCategory) => {
     setCategoryToEdit(category);
+  };
+
+  const deleteCategory = (category: ExistingCategory) => {
+    swal
+      .fire({
+        title: "Are you sure?",
+        text: `Confirm to delete ${category.name}`,
+        showCancelButton: true,
+        cancelButtonText: "Cancel",
+        confirmButtonText: "Delete",
+        reverseButtons: true,
+        confirmButtonColor: "#d55",
+      })
+      .then((result) => {
+        // when confirmed and promise resolved...
+        if (result.isConfirmed) {
+          axios
+            .delete(`/api/categories/${category._id}`)
+            .then(() => fetchCategories());
+        }
+      });
   };
 
   useEffect(() => {
@@ -123,7 +150,7 @@ const Categories = () => {
               <td>{category.parentCategory?.name}</td>
               <td>
                 <EditButton onClick={() => editCategory(category)} />
-                <DeleteButton href={`/categories/delete/${category._id}`} />
+                <DeleteButton onClick={() => deleteCategory(category)} />
               </td>
             </tr>
           ))}
@@ -133,4 +160,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default withSwal(({ swal }, ref) => <Categories swal={swal} />);

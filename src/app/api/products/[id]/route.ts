@@ -3,6 +3,7 @@ import { Product } from "@/models/product";
 
 type Params = { params: { id: string } };
 
+// TODO: Use try catch statements for all these endpoints
 export async function GET(req: Request, { params }: Params) {
   await mongooseConnect();
 
