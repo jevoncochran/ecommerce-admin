@@ -18,10 +18,10 @@ export async function PUT(req: Request, { params }: Params) {
   const { id } = params;
   const body = await req.json();
 
-  const { name, description, price } = body;
+  const { name, description, price, images } = body;
   const product = await Product.updateOne(
     { _id: id },
-    { name, description, price }
+    { name, description, price, images }
   );
 
   return new Response(JSON.stringify(product), { status: 201 });
