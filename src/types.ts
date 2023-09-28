@@ -4,6 +4,7 @@ export interface Category {
 
 export interface ExistingCategory extends Category {
   _id: string;
+  parentCategory?: ExistingCategory;
 }
 
 export interface Product {
