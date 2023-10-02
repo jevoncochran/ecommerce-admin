@@ -8,7 +8,7 @@ export async function GET(req: Request, { params }: Params) {
   await mongooseConnect();
 
   const { id } = params;
-  const product = await Product.findById(id);
+  const product = await Product.findById(id).populate("category");
 
   return new Response(JSON.stringify(product), { status: 200 });
 }
@@ -19,13 +19,25 @@ export async function PUT(req: Request, { params }: Params) {
   const { id } = params;
   const body = await req.json();
 
-  const { name, description, price, images } = body;
-  const product = await Product.updateOne(
-    { _id: id },
-    { name, description, price, images }
-  );
+  const { name, category, description, price, images } = body;
 
-  return new Response(JSON.stringify(product), { status: 201 });
+  if (!category) {
+    await Product.updateOne({ _id: id }, { name, description, price, images });
+
+    const uncategorizedProduct = await Product.updateOne(
+      { _id: id },
+      { $unset: { category: "" } }
+    );
+
+    return new Response(JSON.stringify(uncategorizedProduct), { status: 201 });
+  } else {
+    const product = await Product.updateOne(
+      { _id: id },
+      { name, category, description, price, images }
+    );
+
+    return new Response(JSON.stringify(product), { status: 201 });
+  }
 }
 
 export async function DELETE(req: Request, { params }: Params) {
