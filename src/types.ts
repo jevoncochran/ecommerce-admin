@@ -9,6 +9,7 @@ export interface ExistingCategory extends Category {
 
 export interface Product {
   name: string;
+  category?: ExistingCategory;
   description: string;
   price: number;
   images?: string[];

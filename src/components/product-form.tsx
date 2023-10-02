@@ -1,7 +1,7 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { Product, ToastType } from "@/types";
+import { ExistingCategory, Product, ToastType } from "@/types";
 import { notify } from "@/utils/notify";
 import { ToastContainer } from "react-toastify";
 import Image from "next/image";
@@ -18,10 +18,12 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
 
   const [product, setProduct] = useState({
     name: productInfo.name,
+    category: productInfo.category,
     description: productInfo.description,
     price: productInfo.price,
     images: productInfo.images,
   });
+  const [categories, setCategories] = useState<ExistingCategory[]>([]);
   const [images, setImages] = useState(productInfo.images || []);
   const [isUploading, setIsUploading] = useState(false);
   const [goToProducts, setGoToProducts] = useState(false);
@@ -76,6 +78,16 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
     router.push("/products");
   }
 
+  useEffect(() => {
+    axios.get("/api/categories").then((res) => {
+      setCategories(res.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log(product);
+  }, [product]);
+
   return (
     <>
       <form onSubmit={saveProduct}>
@@ -88,7 +100,29 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
           value={product.name}
           onChange={handleChange}
         />
-        <label htmlFor="">Photos</label>
+        <label htmlFor="category">Category</label>
+        <select
+          name="category"
+          id=""
+          value={product.category?._id}
+          onChange={(e) =>
+            // Set product category to category selected category using category ID passed in and .find() method
+            // In the event that there is no category ID passed in (i.e. e.target.value === ""), s
+            setProduct({
+              ...product,
+              category:
+                categories.find((c) => c._id === e.target.value) ?? undefined,
+            })
+          }
+        >
+          <option value="">Uncategorized</option>
+          {categories.map((c) => (
+            <option key={c._id} value={c._id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+        <label>Photos</label>
         <div className="mb-2 flex flex-wrap gap-2">
           {!isUploading ? (
             <label
