@@ -5,6 +5,7 @@ export interface Category {
 export interface ExistingCategory extends Category {
   _id: string;
   parentCategory?: ExistingCategory;
+  properties?: Property[];
 }
 
 export interface Product {
@@ -22,4 +23,9 @@ export interface ExistingProduct extends Product {
 export enum ToastType {
   Success = "success",
   Error = "error",
+}
+
+export interface Property {
+  name: string;
+  values: string[];
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState, useEffect, ChangeEvent } from "react";
 import axios from "axios";
-import { ExistingCategory } from "@/types";
+import { ExistingCategory, Property } from "@/types";
 import EditButton from "@/components/edit-button";
 import DeleteButton from "@/components/delete-button";
 import { withSwal } from "react-sweetalert2";
@@ -11,11 +11,18 @@ interface CategoriesProps {
   swal: any;
 }
 
+interface NewCategory {
+  name: string;
+  parentCategory: string;
+  properties: Property[] | null | undefined;
+}
+
 // TODO: Figure out react-sweetalert2 types
 const Categories = ({ swal }: CategoriesProps) => {
-  const [newCategory, setNewCategory] = useState({
+  const [newCategory, setNewCategory] = useState<NewCategory>({
     name: "",
     parentCategory: "",
+    properties: null,
   });
   const [categoryToEdit, setCategoryToEdit] = useState<ExistingCategory | null>(
     null
@@ -26,9 +33,10 @@ const Categories = ({ swal }: CategoriesProps) => {
     e.preventDefault();
     if (categoryToEdit) {
       await axios.put("/api/categories", {
+        _id: categoryToEdit._id,
         name: categoryToEdit.name,
         parentCategory: categoryToEdit.parentCategory?._id,
-        _id: categoryToEdit._id,
+        properties: categoryToEdit.properties,
       });
       setCategoryToEdit(null);
     } else {
@@ -37,15 +45,15 @@ const Categories = ({ swal }: CategoriesProps) => {
         parentCategory: newCategory.parentCategory
           ? newCategory.parentCategory
           : undefined,
+        properties: newCategory.properties,
       });
-      setNewCategory({ name: "", parentCategory: "" });
+      setNewCategory({ name: "", parentCategory: "", properties: null });
     }
     fetchCategories();
   };
 
   const fetchCategories = () => {
     axios.get("/api/categories").then((res) => {
-      console.log(res.data);
       setCategories(res.data);
     });
   };
@@ -65,7 +73,8 @@ const Categories = ({ swal }: CategoriesProps) => {
         reverseButtons: true,
         confirmButtonColor: "#d55",
       })
-      .then((result) => {
+      // TODO: Replace this any with a type from react-sweetalert2
+      .then((result: any) => {
         // when confirmed and promise resolved...
         if (result.isConfirmed) {
           axios
@@ -75,9 +84,110 @@ const Categories = ({ swal }: CategoriesProps) => {
       });
   };
 
+  const addProperty = () => {
+    if (categoryToEdit) {
+      setCategoryToEdit({
+        ...categoryToEdit,
+        properties: categoryToEdit.properties
+          ? [...categoryToEdit.properties, { name: "", values: [] }]
+          : [{ name: "", values: [] }],
+      });
+    } else {
+      setNewCategory({
+        ...newCategory,
+        properties: newCategory.properties
+          ? [...newCategory.properties, { name: "", values: [] }]
+          : [{ name: "", values: [] }],
+      });
+    }
+  };
+
+  const removeProperty = (pIndex: number) => {
+    console.log("this is happening");
+    if (categoryToEdit) {
+      setCategoryToEdit({
+        ...categoryToEdit,
+        properties: categoryToEdit?.properties?.filter((property, idx) => {
+          return idx !== pIndex;
+        }),
+      });
+    } else {
+      setNewCategory({
+        ...newCategory,
+        properties: newCategory?.properties?.filter((property, idx) => {
+          return idx !== pIndex;
+        }),
+      });
+    }
+  };
+
+  const changePropertyName = (
+    e: ChangeEvent<HTMLInputElement>,
+    pIndex: number
+  ) => {
+    if (categoryToEdit) {
+      setCategoryToEdit({
+        ...categoryToEdit,
+        properties: categoryToEdit?.properties?.map((p, idx) => {
+          if (idx === pIndex) {
+            return { ...p, name: e.target.value };
+          } else {
+            return p;
+          }
+        }),
+      });
+    } else {
+      setNewCategory({
+        ...newCategory,
+        properties: newCategory?.properties?.map((p, idx) => {
+          if (idx === pIndex) {
+            return { ...p, name: e.target.value };
+          } else {
+            return p;
+          }
+        }),
+      });
+    }
+  };
+
+  const changePropertyValues = (
+    e: ChangeEvent<HTMLInputElement>,
+    pIndex: number
+  ) => {
+    const valuesArr = e.target.value.split(",");
+    const noSpaces = valuesArr.map((el) => el.replace(/\s/g, ""));
+    if (categoryToEdit) {
+      setCategoryToEdit({
+        ...categoryToEdit,
+        properties: categoryToEdit?.properties?.map((p, idx) => {
+          if (idx === pIndex) {
+            return { ...p, values: noSpaces };
+          } else {
+            return p;
+          }
+        }),
+      });
+    } else {
+      setNewCategory({
+        ...newCategory,
+        properties: newCategory?.properties?.map((p, idx) => {
+          if (idx === pIndex) {
+            return { ...p, values: noSpaces };
+          } else {
+            return p;
+          }
+        }),
+      });
+    }
+  };
+
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    console.log(categoryToEdit);
+  }, [categoryToEdit]);
 
   return (
     <div>
@@ -86,76 +196,156 @@ const Categories = ({ swal }: CategoriesProps) => {
         <label htmlFor="">
           {categoryToEdit ? "Edit Category" : "Create New Category"}
         </label>
-        <div className="flex gap-1 mt-1">
-          <input
-            type="text"
-            placeholder="Category name"
-            value={categoryToEdit ? categoryToEdit.name : newCategory.name}
-            // TODO: Figure out a better way to do this
-            onChange={(e) =>
-              categoryToEdit
-                ? setCategoryToEdit({ ...categoryToEdit, name: e.target.value })
-                : setNewCategory({ ...newCategory, name: e.target.value })
-            }
-            className="mb-0"
-          />
-          <select
-            name=""
-            id=""
-            className="mb-0"
-            // TODO: Figure out a better way to do this
-            value={
-              categoryToEdit
-                ? categoryToEdit.parentCategory?._id
-                : newCategory.parentCategory
-            }
-            onChange={(e) =>
-              categoryToEdit
-                ? setCategoryToEdit({
-                    ...categoryToEdit,
-                    parentCategory: categories.find(
-                      (category) => category._id === e.target.value
-                    ),
-                  })
-                : setNewCategory({
-                    ...newCategory,
-                    parentCategory: e.target.value,
-                  })
-            }
-          >
-            <option value="">No parent category</option>
-            {categories.map((category) => (
-              <option key={category._id} value={category._id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-          <button type="submit" className="btn-primary py-1">
-            Save
-          </button>
+        <div className="mt-1">
+          <div className="flex gap-1 mb-2">
+            <input
+              type="text"
+              placeholder="Category name"
+              value={categoryToEdit ? categoryToEdit.name : newCategory.name}
+              // TODO: Figure out a better way to do this
+              onChange={(e) =>
+                categoryToEdit
+                  ? setCategoryToEdit({
+                      ...categoryToEdit,
+                      name: e.target.value,
+                    })
+                  : setNewCategory({ ...newCategory, name: e.target.value })
+              }
+              className="mb-0"
+            />
+            <select
+              name=""
+              id=""
+              className="mb-0"
+              // TODO: Figure out a better way to do this
+              value={
+                categoryToEdit
+                  ? categoryToEdit.parentCategory?._id
+                  : newCategory.parentCategory
+              }
+              onChange={(e) =>
+                categoryToEdit
+                  ? setCategoryToEdit({
+                      ...categoryToEdit,
+                      parentCategory: categories.find(
+                        (category) => category._id === e.target.value
+                      ),
+                    })
+                  : setNewCategory({
+                      ...newCategory,
+                      parentCategory: e.target.value,
+                    })
+              }
+            >
+              <option value="">No parent category</option>
+              {categories.map((category) => (
+                <option key={category._id} value={category._id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-2">
+            <label htmlFor="" className="block">
+              Properties
+            </label>
+            <button
+              type="button"
+              onClick={addProperty}
+              className="btn-default text-sm mb-2"
+            >
+              Add new property
+            </button>
+            {categoryToEdit?.properties &&
+              categoryToEdit?.properties?.length > 0 &&
+              categoryToEdit.properties.map((property, idx) => (
+                <div key={idx} className="flex gap-1 mb-2">
+                  <input
+                    type="text"
+                    placeholder="property name (ex: color)"
+                    onChange={(e) => changePropertyName(e, idx)}
+                    className="mb-0"
+                  />
+                  <input
+                    type="text"
+                    placeholder="values, comma separated"
+                    onChange={(e) => changePropertyValues(e, idx)}
+                    className="mb-0"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeProperty(idx)}
+                    className="btn-default"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            {newCategory?.properties &&
+              newCategory?.properties?.length > 0 &&
+              newCategory.properties.map((property, idx) => (
+                <div key={idx} className="flex gap-1 mb-2">
+                  <input
+                    type="text"
+                    placeholder="property name (ex: color)"
+                    onChange={(e) => changePropertyName(e, idx)}
+                    className="mb-0"
+                  />
+                  <input
+                    type="text"
+                    placeholder="values, comma separated"
+                    onChange={(e) => changePropertyValues(e, idx)}
+                    className="mb-0"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeProperty(idx)}
+                    className="btn-default"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+          </div>
+          <div className="flex gap-1">
+            {categoryToEdit && (
+              <button
+                type="button"
+                onClick={() => setCategoryToEdit(null)}
+                className="btn-default"
+              >
+                Cancel
+              </button>
+            )}
+            <button type="submit" className="btn-primary py-1">
+              Save
+            </button>
+          </div>
         </div>
       </form>
-      <table className="basic mt-4">
-        <thead>
-          <tr>
-            <td>Category</td>
-            <td>Branch</td>
-            <td></td>
-          </tr>
-        </thead>
-        <tbody>
-          {categories.map((category) => (
-            <tr key={category._id}>
-              <td>{category.name}</td>
-              <td>{category.parentCategory?.name}</td>
-              <td>
-                <EditButton onClick={() => editCategory(category)} />
-                <DeleteButton onClick={() => deleteCategory(category)} />
-              </td>
+      {!categoryToEdit && (
+        <table className="basic mt-4">
+          <thead>
+            <tr>
+              <td>Category</td>
+              <td>Branch</td>
+              <td></td>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {categories.map((category) => (
+              <tr key={category._id}>
+                <td>{category.name}</td>
+                <td>{category.parentCategory?.name}</td>
+                <td>
+                  <EditButton onClick={() => editCategory(category)} />
+                  <DeleteButton onClick={() => deleteCategory(category)} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
