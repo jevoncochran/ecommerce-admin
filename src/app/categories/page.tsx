@@ -103,7 +103,6 @@ const Categories = ({ swal }: CategoriesProps) => {
   };
 
   const removeProperty = (pIndex: number) => {
-    console.log("this is happening");
     if (categoryToEdit) {
       setCategoryToEdit({
         ...categoryToEdit,
@@ -263,12 +262,14 @@ const Categories = ({ swal }: CategoriesProps) => {
                   <input
                     type="text"
                     placeholder="property name (ex: color)"
+                    value={property.name}
                     onChange={(e) => changePropertyName(e, idx)}
                     className="mb-0"
                   />
                   <input
                     type="text"
                     placeholder="values, comma separated"
+                    value={property.values.join(", ")}
                     onChange={(e) => changePropertyValues(e, idx)}
                     className="mb-0"
                   />
@@ -281,7 +282,8 @@ const Categories = ({ swal }: CategoriesProps) => {
                   </button>
                 </div>
               ))}
-            {newCategory?.properties &&
+            {!categoryToEdit &&
+              newCategory?.properties &&
               newCategory?.properties?.length > 0 &&
               newCategory.properties.map((property, idx) => (
                 <div key={idx} className="flex gap-1 mb-2">
