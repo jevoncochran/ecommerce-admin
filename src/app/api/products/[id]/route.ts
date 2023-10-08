@@ -19,10 +19,12 @@ export async function PUT(req: Request, { params }: Params) {
   const { id } = params;
   const body = await req.json();
 
-  const { name, category, description, price, images } = body;
+  const { name, category, description, price, images, availability } = body;
 
   if (!category) {
     await Product.updateOne({ _id: id }, { name, description, price, images });
+
+    await Product.updateOne({ _id: id }, { $unset: { availability: "" } });
 
     const uncategorizedProduct = await Product.updateOne(
       { _id: id },
@@ -33,7 +35,7 @@ export async function PUT(req: Request, { params }: Params) {
   } else {
     const product = await Product.updateOne(
       { _id: id },
-      { name, category, description, price, images }
+      { name, category, description, price, images, availability }
     );
 
     return new Response(JSON.stringify(product), { status: 201 });

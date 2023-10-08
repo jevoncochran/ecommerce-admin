@@ -6,7 +6,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
   await mongooseConnect();
 
   const body = await req.json();
-  const { name, category, description, price, images } = body;
+  const { name, category, description, price, images, availability } = body;
 
   // TODO: Use try/catch here
   const product = await Product.create({
@@ -15,6 +15,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     description,
     price,
     images,
+    availability,
   });
   return new Response(JSON.stringify(product), { status: 201 });
 }

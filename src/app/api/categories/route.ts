@@ -5,10 +5,14 @@ export async function POST(req: Request) {
   await mongooseConnect();
 
   const body = await req.json();
-  const { name, parentCategory } = body;
+  const { name, parentCategory, properties } = body;
 
   try {
-    const category = await Category.create({ name, parentCategory });
+    const category = await Category.create({
+      name,
+      parentCategory,
+      properties,
+    });
     return new Response(JSON.stringify(category), { status: 201 });
   } catch (error) {
     return new Response(JSON.stringify(error), { status: 500 });
@@ -30,12 +34,12 @@ export async function PUT(req: Request) {
   await mongooseConnect();
 
   const body = await req.json();
-  const { name, parentCategory, _id } = body;
+  const { _id, name, parentCategory, properties } = body;
 
   try {
     const category = await Category.updateOne(
       { _id },
-      { name, parentCategory }
+      { name, parentCategory, properties }
     );
     return new Response(JSON.stringify(category), { status: 201 });
   } catch (error) {
