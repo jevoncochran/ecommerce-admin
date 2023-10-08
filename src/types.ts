@@ -14,6 +14,7 @@ export interface Product {
   description: string;
   price: number;
   images?: string[];
+  availability?: any;
 }
 
 export interface ExistingProduct extends Product {

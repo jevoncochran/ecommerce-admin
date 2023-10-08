@@ -6,6 +6,7 @@ import { notify } from "@/utils/notify";
 import { ToastContainer } from "react-toastify";
 import Image from "next/image";
 import Spinner from "./spinner";
+import { capitalize } from "@/utils/capitalize";
 
 interface ProductFormProps {
   productInfo: Product;
@@ -22,11 +23,28 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
     description: productInfo.description,
     price: productInfo.price,
     images: productInfo.images,
+    availability: productInfo.availability,
   });
   const [categories, setCategories] = useState<ExistingCategory[]>([]);
   const [images, setImages] = useState(productInfo.images || []);
   const [isUploading, setIsUploading] = useState(false);
   const [goToProducts, setGoToProducts] = useState(false);
+
+  // Grabs the current category for product
+  // Returns default availability object
+  // All availability values are set to false by default
+  const getProductProperties = (category: ExistingCategory) => {
+    const productProps = category?.properties?.map((p) => {
+      const propsObj = { name: p.name, values: {} };
+      p.values.forEach((val: string) => {
+        propsObj.values[val] = false;
+      });
+
+      return propsObj;
+    });
+
+    return productProps;
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setProduct({
@@ -74,6 +92,38 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
     }
   };
 
+  const handlePropertiesChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    pIndex: number,
+    valueName: string
+  ) => {
+    if (e.target.checked) {
+      setProduct({
+        ...product,
+        availability: product.availability.map((property, idx: number) => {
+          if (idx === pIndex) {
+            return {
+              ...property,
+              values: { ...property.values, [valueName]: true },
+            };
+          }
+        }),
+      });
+    } else {
+      setProduct({
+        ...product,
+        availability: product.availability.map((property, idx: number) => {
+          if (idx === pIndex) {
+            return {
+              ...property,
+              values: { ...property.values, [valueName]: false },
+            };
+          }
+        }),
+      });
+    }
+  };
+
   if (goToProducts) {
     router.push("/products");
   }
@@ -106,13 +156,21 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
           id=""
           value={product.category?._id}
           onChange={(e) =>
+            // TODO: Move to this to its own function
             // Set product category to category selected category using category ID passed in and .find() method
             // In the event that there is no category ID passed in (i.e. e.target.value === ""), s
-            setProduct({
-              ...product,
-              category:
-                categories.find((c) => c._id === e.target.value) ?? undefined,
-            })
+            {
+              const selectedCategory = categories.find(
+                (c) => c._id === e.target.value
+              );
+              setProduct({
+                ...product,
+                category: selectedCategory ?? undefined,
+                availability: getProductProperties(
+                  selectedCategory as ExistingCategory
+                ),
+              });
+            }
           }
         >
           <option value="">Uncategorized</option>
@@ -122,6 +180,25 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
             </option>
           ))}
         </select>
+        {product.availability?.map((prop, pIndex: number) => (
+          <div key={pIndex} className="mb-2">
+            <label>{capitalize(prop.name)}</label>
+            {Object.entries(prop.values).map((pv, vIndex) => (
+              <div key={vIndex} className="flex items-center">
+                <input
+                  type="checkbox"
+                  name={pv[0]}
+                  checked={pv[1] as boolean}
+                  className="w-10 mb-0"
+                  onChange={(e) =>
+                    handlePropertiesChange(e, pIndex, e.target.name)
+                  }
+                />
+                <label htmlFor={pv[0]}>{pv[0]}</label>
+              </div>
+            ))}
+          </div>
+        ))}
         <label>Photos</label>
         <div className="mb-2 flex flex-wrap gap-2">
           {!isUploading ? (
