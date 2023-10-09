@@ -1,19 +1,56 @@
 "use client";
 
-import React from "react";
+import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { MobileNavContext } from "@/context/mobile-nav-context";
 
 const Nav = () => {
   const page = usePathname();
 
+  const { showMobileNav, setShowMobileNav } = useContext(MobileNavContext);
+
   const inactiveLink = "flex gap-1 p-1";
   const activeLink = inactiveLink + " bg-highlight text-primary rounded-md";
 
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleWindowResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleWindowResize);
+
+    return () => {
+      window.removeEventListener("resize", handleWindowResize);
+    };
+  }, []);
+
+  // 1) if screen is md or larger, always show nav
+  // 2) if screen is smaller than md
+  // // a) show nav is showMobileNav is true
+  // // b) do not show nav if showMobileNav is false
+  const getNavStyles = (screenSize: number, showMobile: boolean) => {
+    if (screenSize >= 768) {
+      return "top-0 text-gray-500 p-4 static w-auto h-full bg-gray-200";
+    } else {
+      if (showMobile) {
+        return "top-0 text-gray-500 p-4 fixed w-full h-full bg-gray-200";
+      } else {
+        return "text-gray-500 p-4 fixed w-full h-full bg-gray-200 -left-full";
+      }
+    }
+  };
+
+  const closeMobileNav = () => {
+    setShowMobileNav(false);
+  };
+
   return (
-    <aside className="text-gray-500 p-4">
-      <Link href="/" className="flex gap-1 mb-4 mr-4">
+    <aside className={getNavStyles(windowWidth, showMobileNav)}>
+      <Link href="/" onClick={closeMobileNav} className="flex gap-1 mb-4 mr-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -31,7 +68,11 @@ const Nav = () => {
         <span>E-Commerce Admin</span>
       </Link>
       <nav className="flex flex-col gap-2">
-        <Link href="/" className={page === "/" ? activeLink : inactiveLink}>
+        <Link
+          href="/"
+          onClick={closeMobileNav}
+          className={page === "/" ? activeLink : inactiveLink}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -50,6 +91,7 @@ const Nav = () => {
         </Link>
         <Link
           href="/categories"
+          onClick={closeMobileNav}
           className={page.includes("/categories") ? activeLink : inactiveLink}
         >
           <svg
@@ -70,6 +112,7 @@ const Nav = () => {
         </Link>
         <Link
           href="/products"
+          onClick={closeMobileNav}
           className={page.includes("/products") ? activeLink : inactiveLink}
         >
           <svg
@@ -90,6 +133,7 @@ const Nav = () => {
         </Link>
         <Link
           href="/orders"
+          onClick={closeMobileNav}
           className={page.includes("/orders") ? activeLink : inactiveLink}
         >
           <svg
@@ -110,6 +154,7 @@ const Nav = () => {
         </Link>
         <Link
           href="/settings"
+          onClick={closeMobileNav}
           className={page.includes("/settings") ? activeLink : inactiveLink}
         >
           <svg

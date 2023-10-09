@@ -26,10 +26,6 @@ const ProductsPage = () => {
       });
   }, []);
 
-  if (!session) {
-    router.push("/");
-  }
-
   return (
     <div>
       <Link href="/products/new">
