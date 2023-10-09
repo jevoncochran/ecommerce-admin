@@ -180,6 +180,9 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
             </option>
           ))}
         </select>
+        {/* TODO: We need to grab the availability options from the category entity itself and not from the product */}
+        {/* This is because when category is updated, product is not */}
+        {/* For example, adding a new property to category will not make that property automatically appear on product */}
         {product.availability?.map((prop, pIndex: number) => (
           <div key={pIndex} className="mb-2">
             <label>{capitalize(prop.name)}</label>

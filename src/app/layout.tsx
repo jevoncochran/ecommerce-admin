@@ -24,7 +24,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className="bg-blue-900 min-h-screen flex">
+      <body className="bg-gray-200 min-h-screen flex">
         <SessionProvider>
           {!isHomePage && <Nav />}
           {!isHomePage ? (

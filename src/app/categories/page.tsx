@@ -266,6 +266,7 @@ const Categories = ({ swal }: CategoriesProps) => {
                     onChange={(e) => changePropertyName(e, idx)}
                     className="mb-0"
                   />
+                  {/* TODO: There is a backspace bug here */}
                   <input
                     type="text"
                     placeholder="values, comma separated"
