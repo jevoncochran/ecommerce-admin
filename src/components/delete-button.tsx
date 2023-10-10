@@ -9,7 +9,7 @@ interface DeleteButtonProps {
 const DeleteButton = ({ href, onClick }: DeleteButtonProps) => {
   return href ? (
     <Link href={href}>
-      <button>
+      <button className="btn-red">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -28,7 +28,7 @@ const DeleteButton = ({ href, onClick }: DeleteButtonProps) => {
       </button>
     </Link>
   ) : (
-    <button onClick={onClick}>
+    <button onClick={onClick} className="btn-red">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

@@ -7,7 +7,7 @@
 input,
 textarea,
 select {
-  @apply border-2 border-gray-400 rounded-md px-1 w-full mb-2;
+  @apply border border-gray-300 rounded-md w-full mb-2 p-1;
 }
 
 input:focus,
@@ -44,8 +44,9 @@ table.basic button {
   @apply bg-blue-900 text-white text-sm py-1 px-2 rounded-md inline-flex gap-1 mr-1;
 }
 
+table.basic .btn-red,
 .btn-red {
-  @apply bg-red-900 text-white;
+  @apply bg-red-200 text-red-600;
 }
 
 .btn-default {

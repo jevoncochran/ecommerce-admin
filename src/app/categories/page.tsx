@@ -277,7 +277,7 @@ const Categories = ({ swal }: CategoriesProps) => {
                   <button
                     type="button"
                     onClick={() => removeProperty(idx)}
-                    className="btn-default"
+                    className="btn-red"
                   >
                     Remove
                   </button>
@@ -303,7 +303,7 @@ const Categories = ({ swal }: CategoriesProps) => {
                   <button
                     type="button"
                     onClick={() => removeProperty(idx)}
-                    className="btn-default"
+                    className="btn-red"
                   >
                     Remove
                   </button>
