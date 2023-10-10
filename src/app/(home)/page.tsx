@@ -1,7 +1,7 @@
 "use client";
 
 import Nav from "@/components/nav";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import Image from "next/image";
 
 export default function Home() {

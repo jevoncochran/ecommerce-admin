@@ -180,6 +180,9 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
             </option>
           ))}
         </select>
+        {/* TODO: We need to grab the availability options from the category entity itself and not from the product */}
+        {/* This is because when category is updated, product is not */}
+        {/* For example, adding a new property to category will not make that property automatically appear on product */}
         {product.availability?.map((prop, pIndex: number) => (
           <div key={pIndex} className="mb-2">
             <label>{capitalize(prop.name)}</label>
@@ -205,7 +208,7 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
             <label
               // The file uploader will not opem when this is here for some reason
               // htmlFor="imageUpload"
-              className="w-24 h-24 flex justify-center items-center text-sm gap-1 text-gray-500 rounded-lg bg-gray-200 cursor-pointer"
+              className="w-24 h-24 flex justify-center items-center text-sm gap-1 text-gray-500 rounded-lg bg-white shadow-md border border-gray-200 cursor-pointer"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -238,7 +241,7 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
                 alt="product"
                 height={96}
                 width={96}
-                className="rounded-lg"
+                className="rounded-lg bg-white p-2 shadow-md border border-gray-200"
               />
             ))}
           {!images.length && <div>No images of this product</div>}

@@ -266,6 +266,7 @@ const Categories = ({ swal }: CategoriesProps) => {
                     onChange={(e) => changePropertyName(e, idx)}
                     className="mb-0"
                   />
+                  {/* TODO: There is a backspace bug here */}
                   <input
                     type="text"
                     placeholder="values, comma separated"
@@ -276,7 +277,7 @@ const Categories = ({ swal }: CategoriesProps) => {
                   <button
                     type="button"
                     onClick={() => removeProperty(idx)}
-                    className="btn-default"
+                    className="btn-red"
                   >
                     Remove
                   </button>
@@ -302,7 +303,7 @@ const Categories = ({ swal }: CategoriesProps) => {
                   <button
                     type="button"
                     onClick={() => removeProperty(idx)}
-                    className="btn-default"
+                    className="btn-red"
                   >
                     Remove
                   </button>
