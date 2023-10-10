@@ -97,29 +97,33 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
     pIndex: number,
     valueName: string
   ) => {
+    // Grab the property that needs to updated
+    let relevantProp = product.availability[pIndex];
     if (e.target.checked) {
+      // Update that property, setting the relevant value to true
+      const relevantPropUpdated = {
+        ...relevantProp,
+        values: { ...relevantProp.values, [valueName]: true },
+      };
+      // Grab the entire the availability array
+      let availability = product.availability;
+      // Set the property at the provided index to the updated property object
+      availability[pIndex] = relevantPropUpdated;
       setProduct({
         ...product,
-        availability: product.availability.map((property, idx: number) => {
-          if (idx === pIndex) {
-            return {
-              ...property,
-              values: { ...property.values, [valueName]: true },
-            };
-          }
-        }),
+        availability,
       });
     } else {
+      // Here, we are doing the opposite from above
+      const relevantPropUpdated = {
+        ...relevantProp,
+        values: { ...relevantProp.values, [valueName]: false },
+      };
+      let availability = product.availability;
+      availability[pIndex] = relevantPropUpdated;
       setProduct({
         ...product,
-        availability: product.availability.map((property, idx: number) => {
-          if (idx === pIndex) {
-            return {
-              ...property,
-              values: { ...property.values, [valueName]: false },
-            };
-          }
-        }),
+        availability,
       });
     }
   };
