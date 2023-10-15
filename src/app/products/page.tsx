@@ -6,11 +6,12 @@ import axios from "axios";
 import { ExistingProduct } from "@/types";
 import EditButton from "@/components/edit-button";
 import DeleteButton from "@/components/delete-button";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useRedirect } from "@/hooks/useRedirect";
 
 const ProductsPage = () => {
-  const { data: session } = useSession();
+  useRedirect();
+
   const router = useRouter();
 
   const [products, setProducts] = useState<ExistingProduct[]>([]);

@@ -12,6 +12,7 @@ const OrderSchema = new Schema(
     state: { type: String, require: true },
     zipCode: { type: String, require: true },
     paid: { type: Boolean },
+    seller: { type: mongoose.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );
