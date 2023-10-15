@@ -252,7 +252,7 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
                 alt="product"
                 height={96}
                 width={96}
-                className="rounded-lg bg-white p-2 shadow-md border border-gray-200"
+                className="rounded-lg bg-white p-2 shadow-md border border-gray-200 max-h-[96px]"
               />
             ))}
           {!images.length && <div>No images of this product</div>}
