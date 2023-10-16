@@ -2,17 +2,11 @@ import mongoose, { Schema } from "mongoose";
 
 const OrderSchema = new Schema(
   {
-    line_items: { type: Object, require: true },
-    // TODO: Should probably use shippingInfo subdoc here
-    name: { type: String, require: true },
-    email: { type: String, require: true },
-    address: { type: String, require: true },
-    addressLine2: { type: String },
-    city: { type: String, require: true },
-    state: { type: String, require: true },
-    zipCode: { type: String, require: true },
+    products: { type: Object, require: true },
+    customer: { type: Object, require: true },
+    sellerId: { type: mongoose.Types.ObjectId, ref: "User", require: true },
+    total: { type: Number, require: true },
     paid: { type: Boolean },
-    seller: { type: mongoose.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

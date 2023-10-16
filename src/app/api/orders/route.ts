@@ -9,7 +9,7 @@ export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
 
   try {
-    const orders = await Order.find({ seller: session?.user?._id }).sort({
+    const orders = await Order.find({ sellerId: session?.user?._id }).sort({
       createdAt: -1,
     });
 

@@ -6,7 +6,7 @@ import { useRedirect } from "@/hooks/useRedirect";
 
 const OrdersPage = () => {
   useRedirect();
-  
+
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
@@ -38,12 +38,12 @@ const OrdersPage = () => {
               </td>
               <td>{order._id}</td>
               <td>
-                {order.name}
+                {order.customer.name}
                 <br />
-                {order.email}
+                {order.customer.email}
               </td>
               <td>
-                {order.line_items?.map((product) => (
+                {order.products.map((product) => (
                   <div key={product._id}>
                     {product.name}
                     <br />
