@@ -21,7 +21,7 @@ interface NewCategory {
 // TODO: Figure out react-sweetalert2 types
 const Categories = ({ swal }: CategoriesProps) => {
   useRedirect();
-  
+
   const [newCategory, setNewCategory] = useState<NewCategory>({
     name: "",
     parentCategory: "",
@@ -186,10 +186,6 @@ const Categories = ({ swal }: CategoriesProps) => {
   useEffect(() => {
     fetchCategories();
   }, []);
-
-  useEffect(() => {
-    console.log(categoryToEdit);
-  }, [categoryToEdit]);
 
   return (
     <div>

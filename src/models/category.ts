@@ -5,7 +5,7 @@ const CategorySchema = new mongoose.Schema(
     name: { type: String, require: true },
     parentCategory: { type: mongoose.Types.ObjectId, ref: "Category" },
     properties: [{ type: Object }],
-    seller: { type: mongoose.Types.ObjectId, ref: "User" },
+    sellerId: { type: mongoose.Types.ObjectId, ref: "User", require: true },
   },
   { timestamps: true }
 );

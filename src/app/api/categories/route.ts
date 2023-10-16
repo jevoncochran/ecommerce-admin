@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       name,
       parentCategory,
       properties,
-      seller: session?.user?._id,
+      sellerId: session?.user?._id,
     });
     return new Response(JSON.stringify(category), { status: 201 });
   } catch (error) {
@@ -30,7 +30,7 @@ export async function GET() {
     const session = await getServerSession(authOptions);
 
     const categories = await Category.find({
-      seller: session?.user?._id,
+      sellerId: session?.user?._id,
     }).populate("parentCategory");
     return new Response(JSON.stringify(categories), { status: 200 });
   } catch (error) {
@@ -51,7 +51,7 @@ export async function PUT(req: Request) {
 
     const categoryById = await Category.findById(_id);
 
-    if (categoryById.seller?.toString() !== session?.user?._id) {
+    if (categoryById.sellerId?.toString() !== session?.user?._id) {
       return new Response(
         JSON.stringify({ errorMessage: "Unauthorized request" }),
         { status: 401 }

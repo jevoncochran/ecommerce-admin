@@ -6,13 +6,10 @@ import axios from "axios";
 import { ExistingProduct } from "@/types";
 import EditButton from "@/components/edit-button";
 import DeleteButton from "@/components/delete-button";
-import { useRouter } from "next/navigation";
 import { useRedirect } from "@/hooks/useRedirect";
 
 const ProductsPage = () => {
   useRedirect();
-
-  const router = useRouter();
 
   const [products, setProducts] = useState<ExistingProduct[]>([]);
 
