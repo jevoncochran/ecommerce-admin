@@ -7,21 +7,26 @@ import { authOptions } from "../auth/[...nextauth]/options";
 export async function POST(req: NextRequest, res: NextResponse) {
   await mongooseConnect();
 
-  const body = await req.json();
-  const { name, category, description, price, images, availability, seller } =
-    body;
+  try {
+    const session = await getServerSession(authOptions);
 
-  // TODO: Use try/catch here
-  const product = await Product.create({
-    name,
-    category,
-    description,
-    price,
-    images,
-    availability,
-    seller,
-  });
-  return new Response(JSON.stringify(product), { status: 201 });
+    const body = await req.json();
+    const { name, category, description, price, images, availability } = body;
+
+    // TODO: Use try/catch here
+    const product = await Product.create({
+      name,
+      category,
+      description,
+      price,
+      images,
+      availability,
+      sellerId: session?.user?._id,
+    });
+    return new Response(JSON.stringify(product), { status: 201 });
+  } catch (error) {
+    return new Response(JSON.stringify(error), { status: 500 });
+  }
 }
 
 export async function GET() {
@@ -30,7 +35,7 @@ export async function GET() {
   const session = await getServerSession(authOptions);
 
   try {
-    const products = await Product.find({ seller: session?.user?._id });
+    const products = await Product.find({ sellerId: session?.user?._id });
 
     return new Response(JSON.stringify(products), { status: 200 });
   } catch (error) {

@@ -7,7 +7,6 @@ import { ToastContainer } from "react-toastify";
 import Image from "next/image";
 import Spinner from "./spinner";
 import { capitalize } from "@/utils/capitalize";
-import { useSession } from "next-auth/react";
 
 interface ProductFormProps {
   productInfo: Product;
@@ -16,8 +15,6 @@ interface ProductFormProps {
 }
 
 const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
-  const { data: session } = useSession();
-
   const router = useRouter();
 
   const [product, setProduct] = useState({
@@ -64,7 +61,6 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
       await axios.post("/api/products", {
         ...product,
         images,
-        seller: session?.user?._id,
       });
       notify("Product succesfully created", ToastType.Success);
       setTimeout(() => {

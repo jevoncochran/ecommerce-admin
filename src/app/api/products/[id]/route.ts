@@ -15,7 +15,7 @@ export async function GET(req: Request, { params }: Params) {
 
     const product = await Product.findById(id).populate("category");
 
-    if (product.seller?.toString() !== session?.user._id) {
+    if (product.sellerId?.toString() !== session?.user._id) {
       return new Response(
         JSON.stringify({ errorMessage: "Unauthorized request" }),
         { status: 401 }
@@ -37,7 +37,7 @@ export async function PUT(req: Request, { params }: Params) {
 
     const productById = await Product.findById(id);
 
-    if (productById.seller?.toString() !== session?.user?._id) {
+    if (productById.sellerId?.toString() !== session?.user?._id) {
       return new Response(
         JSON.stringify({ errorMessage: "Unauthorized request" }),
         { status: 401 }
@@ -86,7 +86,7 @@ export async function DELETE(req: Request, { params }: Params) {
     const session = await getServerSession(authOptions);
 
     const productById = await Product.findById(id);
-    if (productById.seller?.toString() !== session?.user?._id) {
+    if (productById.sellerId?.toString() !== session?.user?._id) {
       return new Response(
         JSON.stringify({ errorMessage: "Unauthorized request" }),
         { status: 401 }

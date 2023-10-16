@@ -18,11 +18,13 @@ export async function POST(req: Request) {
 
     if (event.type === "checkout.session.completed") {
       const data = event.data.object;
-      const orderId = data.metadata.orderId;
+      const orderIds = data.metadata.orderIds.split(",");
       const paid = data.payment_status === "paid";
 
-      if (orderId && paid) {
-        await Order.findByIdAndUpdate(orderId, { paid: true });
+      if (orderIds && paid) {
+        for (const orderId of orderIds) {
+          await Order.findByIdAndUpdate(orderId, { paid: true });
+        }
       }
     }
 
