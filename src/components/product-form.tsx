@@ -58,7 +58,10 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
 
     if (type === "create") {
       // Create product
-      await axios.post("/api/products", { ...product, images });
+      await axios.post("/api/products", {
+        ...product,
+        images,
+      });
       notify("Product succesfully created", ToastType.Success);
       setTimeout(() => {
         setGoToProducts(true);
@@ -97,29 +100,33 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
     pIndex: number,
     valueName: string
   ) => {
+    // Grab the property that needs to updated
+    let relevantProp = product.availability[pIndex];
     if (e.target.checked) {
+      // Update that property, setting the relevant value to true
+      const relevantPropUpdated = {
+        ...relevantProp,
+        values: { ...relevantProp.values, [valueName]: true },
+      };
+      // Grab the entire the availability array
+      let availability = product.availability;
+      // Set the property at the provided index to the updated property object
+      availability[pIndex] = relevantPropUpdated;
       setProduct({
         ...product,
-        availability: product.availability.map((property, idx: number) => {
-          if (idx === pIndex) {
-            return {
-              ...property,
-              values: { ...property.values, [valueName]: true },
-            };
-          }
-        }),
+        availability,
       });
     } else {
+      // Here, we are doing the opposite from above
+      const relevantPropUpdated = {
+        ...relevantProp,
+        values: { ...relevantProp.values, [valueName]: false },
+      };
+      let availability = product.availability;
+      availability[pIndex] = relevantPropUpdated;
       setProduct({
         ...product,
-        availability: product.availability.map((property, idx: number) => {
-          if (idx === pIndex) {
-            return {
-              ...property,
-              values: { ...property.values, [valueName]: false },
-            };
-          }
-        }),
+        availability,
       });
     }
   };
@@ -133,10 +140,6 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
       setCategories(res.data);
     });
   }, []);
-
-  useEffect(() => {
-    console.log(product);
-  }, [product]);
 
   return (
     <>
@@ -241,7 +244,7 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
                 alt="product"
                 height={96}
                 width={96}
-                className="rounded-lg bg-white p-2 shadow-md border border-gray-200"
+                className="rounded-lg bg-white p-2 shadow-md border border-gray-200 max-h-[96px]"
               />
             ))}
           {!images.length && <div>No images of this product</div>}

@@ -6,6 +6,7 @@ import { ExistingCategory, Property } from "@/types";
 import EditButton from "@/components/edit-button";
 import DeleteButton from "@/components/delete-button";
 import { withSwal } from "react-sweetalert2";
+import { useRedirect } from "@/hooks/useRedirect";
 
 interface CategoriesProps {
   swal: any;
@@ -19,6 +20,8 @@ interface NewCategory {
 
 // TODO: Figure out react-sweetalert2 types
 const Categories = ({ swal }: CategoriesProps) => {
+  useRedirect();
+
   const [newCategory, setNewCategory] = useState<NewCategory>({
     name: "",
     parentCategory: "",
@@ -183,10 +186,6 @@ const Categories = ({ swal }: CategoriesProps) => {
   useEffect(() => {
     fetchCategories();
   }, []);
-
-  useEffect(() => {
-    console.log(categoryToEdit);
-  }, [categoryToEdit]);
 
   return (
     <div>
