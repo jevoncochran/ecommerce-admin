@@ -141,10 +141,6 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
     });
   }, []);
 
-  useEffect(() => {
-    console.log(product);
-  }, [product]);
-
   return (
     <>
       <form onSubmit={saveProduct}>

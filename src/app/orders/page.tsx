@@ -11,7 +11,6 @@ const OrdersPage = () => {
 
   useEffect(() => {
     axios.get("/api/orders").then((res) => {
-      console.log(res.data);
       setOrders(res.data);
     });
   }, []);
