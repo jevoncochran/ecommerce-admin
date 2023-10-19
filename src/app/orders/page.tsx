@@ -2,11 +2,8 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useRedirect } from "@/hooks/useRedirect";
 
 const OrdersPage = () => {
-  useRedirect();
-
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
