@@ -140,7 +140,7 @@ const Nav = () => {
           Orders
         </Link>
         <Link
-          href="/settings"
+          href="#"
           onClick={closeMobileNav}
           className={page.includes("/settings") ? activeLink : inactiveLink}
         >

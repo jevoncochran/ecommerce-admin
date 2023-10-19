@@ -13,12 +13,14 @@ export const authOptions: NextAuthOptions = {
   ],
   // Add the adapter to the Next Auth options and pass in the client promise
   adapter: MongoDBAdapter(clientPromise),
+  // Must set session strategy to "jwt" for middleware to work with MongoDB adapter
+  // When MongoDB adapter is used, session strategy defaults to "database"
+  session: { strategy: "jwt" },
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      return true;
-    },
-    async session({ session, token, user }) {
-      session.user._id = user.id;
+    async session({ session, token }) {
+      if (token) {
+        session.user._id = token.sub;
+      }
       return session;
     },
   },

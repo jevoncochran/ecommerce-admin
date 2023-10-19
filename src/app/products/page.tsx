@@ -6,11 +6,8 @@ import axios from "axios";
 import { ExistingProduct } from "@/types";
 import EditButton from "@/components/edit-button";
 import DeleteButton from "@/components/delete-button";
-import { useRedirect } from "@/hooks/useRedirect";
 
 const ProductsPage = () => {
-  useRedirect();
-
   const [products, setProducts] = useState<ExistingProduct[]>([]);
 
   useEffect(() => {
