@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const OrdersPage = () => {
-  const [orders, setOrders] = useState([]);
+  // TODO: Correctly type orders
+  const [orders, setOrders] = useState<any>([]);
 
   useEffect(() => {
     axios.get("/api/orders").then((res) => {
@@ -26,7 +27,8 @@ const OrdersPage = () => {
           </tr>
         </thead>
         <tbody>
-          {orders.map((order) => (
+          {/* TODO: Correctly type here */}
+          {orders.map((order: any) => (
             <tr key={order._id}>
               <td>{order.createdAt}</td>
               <td className={order.paid ? "text-green-600" : "text-red-600"}>
@@ -39,7 +41,8 @@ const OrdersPage = () => {
                 {order.customer.email}
               </td>
               <td>
-                {order.products.map((product) => (
+                {/* TODO: Correctly type here as well */}
+                {order.products.map((product: any) => (
                   <div key={product._id}>
                     {product.name}
                     <br />

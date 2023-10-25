@@ -19,7 +19,7 @@ const EditProductPage = ({ params }: { params: { id: string } }) => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [id]);
 
   return (
     product && (

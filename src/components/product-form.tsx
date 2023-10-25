@@ -35,7 +35,8 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
   // All availability values are set to false by default
   const getProductProperties = (category: ExistingCategory) => {
     const productProps = category?.properties?.map((p) => {
-      const propsObj = { name: p.name, values: {} };
+      // TODO: Remove any here and correctly type
+      const propsObj: any = { name: p.name, values: {} };
       p.values.forEach((val: string) => {
         propsObj.values[val] = false;
       });
@@ -46,7 +47,9 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
     return productProps;
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setProduct({
       ...product,
       [e.target.name]: e.target.value,
@@ -186,7 +189,8 @@ const ProductForm = ({ productInfo, productId, type }: ProductFormProps) => {
         {/* TODO: We need to grab the availability options from the category entity itself and not from the product */}
         {/* This is because when category is updated, product is not */}
         {/* For example, adding a new property to category will not make that property automatically appear on product */}
-        {product.availability?.map((prop, pIndex: number) => (
+        {/* Also, I need to remove any here and correctly type */}
+        {product.availability?.map((prop: any, pIndex: number) => (
           <div key={pIndex} className="mb-2">
             <label>{capitalize(prop.name)}</label>
             {Object.entries(prop.values).map((pv, vIndex) => (

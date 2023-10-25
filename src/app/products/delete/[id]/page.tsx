@@ -35,7 +35,7 @@ const DeleteProductPage = ({ params }: { params: { id: string } }) => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [id]);
 
   return (
     <div>

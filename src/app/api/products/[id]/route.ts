@@ -15,7 +15,7 @@ export async function GET(req: Request, { params }: Params) {
 
     const product = await Product.findById(id).populate("category");
 
-    if (product.sellerId?.toString() !== session?.user._id) {
+    if (product.sellerId?.toString() !== session?.user?._id) {
       return new Response(
         JSON.stringify({ errorMessage: "Unauthorized request" }),
         { status: 401 }
