@@ -3,6 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { Order } from "@/models/order";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
+import Stripe from "stripe";
 
 const secret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -12,13 +13,13 @@ export async function POST(req: Request) {
   try {
     const body = await req.text();
 
-    const signature = headers().get("stripe-signature");
+    const signature = headers().get("stripe-signature") as string;
 
-    const event = stripe.webhooks.constructEvent(body, signature, secret);
+    const event = stripe.webhooks.constructEvent(body, signature, secret!);
 
     if (event.type === "checkout.session.completed") {
-      const data = event.data.object;
-      const orderIds = data.metadata.orderIds.split(",");
+      const data = event.data.object as Stripe.Checkout.Session;
+      const orderIds = data.metadata?.orderIds.split(",");
       const paid = data.payment_status === "paid";
 
       if (orderIds && paid) {
